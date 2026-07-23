@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>庹旯 · 幻想之境</title>
+    <!-- 字体与图标库 (Font Awesome) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ===== 全局重置 & 字体 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+            margin: 0;
+            height: 100%;
+            background: url(https://pic1.imgdb.cn/item/69fb85cbecff72ad89a08398.jpg) center/cover no-repeat fixed !important;
+            color: #eae6e1;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #0f0d12;
+            padding: 1.5rem;
+        }
+
+        /* ===== 主卡片 ===== */
+        .profile-card {
+            max-width: 820px;
+            width: 100%;
+            background: rgba(20, 18, 24, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 2.5rem;
+            padding: 2.8rem 2.8rem 2.8rem 2.8rem;
+            box-shadow: 0 25px 50px -10px rgba(0,0,0,0.8), 0 0 0 1px rgba(255, 215, 150, 0.08) inset;
+            border: 1px solid rgba(255, 215, 150, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 装饰光晕 */
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            left: -20%;
+            width: 70%;
+            height: 70%;
+            background: radial-gradient(circle, rgba(200, 130, 200, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .profile-card:hover {
+            box-shadow: 0 35px 60px -15px rgba(0,0,0,0.9), 0 0 0 1px rgba(255, 215, 150, 0.15) inset;
+        }
+
+        /* ===== 头像区域 ===== */
+        .avatar-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2.2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .avatar-ring {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #c79b6e, #a5724a, #7a4f32);
+            padding: 4px;
+            box-shadow: 0 0 30px rgba(200, 150, 100, 0.25);
+            margin-bottom: 1rem;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #1e1a1f;
+            display: block;
+            border: 2px solid rgba(20, 18, 24, 0.8);
+        }
+
+        /* 如果暂时没有头像，用占位图标 */
+        .avatar-placeholder {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #2a2330, #1a151e);
+            display: none; /* 默认隐藏，当 img 加载失败时显示 */
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: #b89a7a;
+            border: 2px solid rgba(20, 18, 24, 0.8);
+        }
+
+        .display-name {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            background: linear-gradient(to right, #f0e3d4, #dcc2a8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 10px rgba(180, 130, 80, 0.2);
+        }
+
+        .display-title {
+            font-size: 1rem;
+            color: #b8a99a;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-top: 0.2rem;
+            font-weight: 300;
+            background: rgba(255, 215, 150, 0.06);
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 215, 150, 0.08);
+        }
+
+        /* ===== 分隔装饰 ===== */
+        .divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            margin: 1.8rem 0 2rem 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(200, 170, 140, 0.25), transparent);
+        }
+
+        .divider-icon {
+            color: #b89a7a;
+            font-size: 0.9rem;
+            opacity: 0.6;
+        }
+
+        /* ===== 简介 ===== */
+        .bio {
+            text-align: center;
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #d6cdc4;
+            max-width: 600px;
+            margin: 0 auto 2.2rem auto;
+            position: relative;
+            z-index: 1;
+            font-weight: 300;
+            letter-spacing: 0.02em;
+        }
+
+        .bio i {
+            color: #c79b6e;
+            margin: 0 0.2rem;
+        }
+
+        /* ===== 社交链接 ===== */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.2rem 1.8rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #c8bcb0;
+            text-decoration: none;
+            font-size: 1rem;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 215, 150, 0.06);
+            transition: all 0.25s ease;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+            backdrop-filter: blur(4px);
+        }
+
+        .social-link i {
+            font-size: 1.2rem;
+            width: 1.6rem;
+            text-align: center;
+            color: #c79b6e;
+            transition: color 0.25s ease;
+        }
+
+        .social-link:hover {
+            background: rgba(200, 150, 100, 0.08);
+            border-color: rgba(200, 150, 100, 0.2);
+            color: #f0e3d4;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -8px rgba(0,0,0,0.5);
+        }
+
+        .social-link:hover i {
+            color: #e6c8a8;
+        }
+
+        /* 针对 GameMale 图标的 img 样式补充 */
+        .social-link img {
+            width: 1.2rem;
+            height: 1.2rem;
+            border-radius: 4px;
+        }
+
+        /* ===== 底部信息 ===== */
+        .footer-note {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #6a5f56;
+            letter-spacing: 0.06em;
+            border-top: 1px solid rgba(255, 215, 150, 0.05);
+            padding-top: 1.8rem;
+            margin-top: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-note i {
+            color: #8a7562;
+            margin: 0 0.3rem;
+        }
+
+        .footer-note a {
+            color: #b89a7a;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-note a:hover {
+            color: #e6c8a8;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 600px) {
+            .profile-card {
+                padding: 2rem 1.5rem;
+                border-radius: 1.8rem;
+            }
+
+            .display-name {
+                font-size: 1.8rem;
+            }
+
+            .avatar-ring {
+                width: 100px;
+                height: 100px;
+            }
+
+            .social-links {
+                gap: 0.8rem;
+            }
+
+            .social-link {
+                padding: 0.4rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .bio {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .profile-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .social-link span {
+                display: none;
+            }
+            .social-link {
+                padding: 0.5rem 0.9rem;
+            }
+            .social-link i {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="profile-card">
+        <!-- ===== 头像 & 姓名 ===== -->
+        <div class="avatar-section">
+            <div class="avatar-ring">
+                <!-- 头像图片，加载失败时显示占位图标 -->
+                <img class="avatar-img" src="https://pic1.imgdb.cn/i/7heNajAn7leQNjHFuVjGKy.jpg" 
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="avatar-placeholder">
+                    <i class="fas fa-user-astronaut"></i>
+                </div>
+            </div>
+            <div class="display-name">庹旯</div>
+            <div class="display-title">✦ 骚狗 ✦</div>
+        </div>
+
+        <!-- ===== 分隔线 ===== -->
+        <div class="divider">
+            <span class="divider-line"></span>
+            <span class="divider-icon"><i class="fas fa-gem"></i></span>
+            <span class="divider-line"></span>
+        </div>
+
+        <!-- ===== 个人简介 ===== -->
+        <div class="bio">
+            <i class="fas fa-quote-left" style="opacity:0.3; margin-right:0.4rem;"></i>
+            兽人控
+            热爱一切大肉棒兽人老公。
+            <i class="fas fa-quote-right" style="opacity:0.3; margin-left:0.4rem;"></i>
+        </div>
+
+        <!-- ===== 社交链接 ===== -->
+        <div class="social-links">
+            <a href="https://www.gamemale.com/space-uid-717473.html" class="social-link" target="_blank">
+                <img src="https://pic1.imgdb.cn/i/033uFN8ltP47BkP2g4lfw8.png" alt="GameMale">
+                <span>GameMale</span>
+            </a>
+            <a href="https://x.com/ToRa691817" class="social-link" target="_blank">
+                <i class="fab fa-twitter"></i> <span>twitter</span>
+            </a>
+            <a href="#" class="social-link" target="_blank">
+                <i class="fab fa-bilibili"></i> <span>B站</span>
+            </a>
+            <a href="#" class="social-link" target="_blank">
+                <i class="fas fa-envelope"></i> <span>邮箱</span>
+            </a>
+        </div>
+
+        <!-- ===== 页脚 ===== -->
+        <div class="footer-note">
+            <i class="fas fa-compass"></i> 探索 · 创造 · 分享 
+            <span style="margin:0 0.6rem; opacity:0.2;">|</span>
+            <i class="far fa-copyright"></i> 2026 
+            <span style="margin:0 0.4rem;">·</span>
+            <a href="#">关于我</a>
+        </div>
+    </div>
+
+</body>
+</html>
